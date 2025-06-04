@@ -1,0 +1,43 @@
+name: Create LDES Feed
+
+on:
+  push:
+    branches:
+      - main
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+  schedule:
+    # every 12 hours
+    - cron: "* */12 * * *"
+
+jobs:
+  create-ldes-feed:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up NPM
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Dependencies
+        run: |
+          cd pipeline
+          npm ci
+
+      - name: Generate LDES Feed
+        run: |
+          cd pipeline
+          npx @rdfc/js-runner rdfc-pipeline.ttl
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add docs/ pipeline/feed-state/ pipeline/leveldb/
+          git commit -m "Update LDES feed" || echo "No changes to commit"
+          git push
