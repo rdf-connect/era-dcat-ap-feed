@@ -1,0 +1,16 @@
+{
+    "name": "era-dcat-ap-feed",
+    "version": "1.0.0",
+    "description": "RDF-Connect pipeline to produce an LDES feed from ERA DCAT-AP dumps",
+    "type": "module",
+    "author": "Ieben Smessaert",
+    "contributors": ["Julián Rojas"],
+    "license": "MIT",
+    "dependencies": {
+      "@rdfc/dumps-to-feed-processor-ts": "^1.2.0",
+      "@rdfc/http-utils-processor-ts": "^0.1.2",
+      "@rdfc/file-utils-processors-ts": "^0.6.0",
+      "@rdfc/js-runner": "^1.0.0",
+      "@rdfc/sds-processors-ts": "^1.4.2"
+    }
+  }

@@ -1,0 +1,147 @@
+@prefix js:   <https://w3id.org/conn/js#>.
+@prefix :     <https://w3id.org/conn#>.
+@prefix owl:  <http://www.w3.org/2002/07/owl#>.
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#>.
+@prefix tree: <https://w3id.org/tree#>.
+@prefix as:   <https://www.w3.org/ns/activitystreams#>.
+@prefix ex:   <http://example.org/ns#>.
+
+<> owl:imports <./node_modules/@rdfc/js-runner/ontology.ttl>.
+<> owl:imports <./node_modules/@rdfc/js-runner/channels/file.ttl>.
+<> owl:imports <./node_modules/@rdfc/file-utils-processors-ts/processors.ttl>.
+<> owl:imports <./node_modules/@rdfc/http-utils-processor-ts/processors.ttl>.
+<> owl:imports <./node_modules/@rdfc/dumps-to-feed-processor-ts/processor.ttl>.
+<> owl:imports <./node_modules/@rdfc/sds-processors-ts/configs/bucketizer.ttl>.
+<> owl:imports <./node_modules/@rdfc/sds-processors-ts/configs/sdsify.ttl>.
+<> owl:imports <./node_modules/@rdfc/sds-processors-ts/configs/ldes_disk_writer.ttl>.
+<> owl:imports <./node_modules/@rdfc/js-runner/processor/resc.ttl>. # Testing procesor
+
+
+#########################################
+# Channel definitions
+#########################################
+
+# Channel for js:HttpFetch -> js:DumpsToFeed
+<raw/writer> a js:JsWriterChannel.
+<raw/reader> a js:JsReaderChannel.
+[ ] a js:JsChannel;
+    :reader <raw/reader>;
+    :writer <raw/writer>.
+
+# Channel for js:DumpsToFeed -> js:Sdsify
+<feed/writer> a js:JsWriterChannel.
+<feed/reader> a js:JsReaderChannel.
+[ ] a js:JsChannel;
+    :reader <feed/reader>;
+    :writer <feed/writer>.
+
+# Channel for js:Sdsify -> js:Bucketize
+<sds/writer> a js:JsWriterChannel.
+<sds/reader> a js:JsReaderChannel.
+[ ] a js:JsChannel;
+    :reader <sds/reader>;
+    :writer <sds/writer>.
+
+# Channel for js:Bucketize -> js:LdesDiskWriter
+<bucketized/writer> a js:JsWriterChannel.
+<bucketized/reader> a js:JsReaderChannel.
+[ ] a js:JsChannel;
+    :reader <bucketized/reader>;
+    :writer <bucketized/writer>.
+
+# Channel for js:GlobRead -> js:Bucketize
+<metadata/writer> a js:JsWriterChannel.
+<metadata/reader> a js:JsReaderChannel.
+[ ] a js:JsChannel;
+    :reader <metadata/reader>;
+    :writer <metadata/writer>.
+
+# Channel for js:Bucketize -> js:LdesDiskWriter
+<metadata/bucketized/writer> a js:JsWriterChannel.
+<metadata/bucketized/reader> a js:JsReaderChannel.
+[ ] a js:JsChannel;
+    :reader <metadata/bucketized/reader>;
+    :writer <metadata/bucketized/writer>.
+
+
+#########################################
+# Processor definitions
+#########################################
+
+# Processor to read and stream out the gzipped DCAT-AP dump.
+[ ] a js:HttpFetch;
+    # Encoded SPARQL CONSTRUCT query to fetch the DCAT-AP dump from the Virtuoso instance
+    # Query: PREFIX dcat: <http://www.w3.org/ns/dcat#> CONSTRUCT { ?s ?p ?o } WHERE { GRAPH <http://data.europa.eu/949/graph/uat/dcat> { VALUES ?dcat { dcat:Dataset dcat:Distribution dcat:DataService } ?s a ?dcat; ?p ?o. } }
+    js:url "https://uat.virtuoso.ecdp.tech.ec.europa.eu/sparql?query=PREFIX%20dcat%3A%20%3Chttp%3A%2F%2Fwww.w3.org%2Fns%2Fdcat%23%3E%20CONSTRUCT%20%7B%20%3Fs%20%3Fp%20%3Fo%20%7D%20WHERE%20%7B%20GRAPH%20%3Chttp%3A%2F%2Fdata.europa.eu%2F949%2Fgraph%2Fuat%2Fdcat%3E%20%7B%20VALUES%20%3Fdcat%20%7B%20dcat%3ADataset%20dcat%3ADistribution%20dcat%3ADataService%20%7D%20%3Fs%20a%20%3Fdcat%3B%20%3Fp%20%3Fo.%20%7D%20%7D";
+    js:writer <raw/writer>;
+    js:options [
+        js:closeOnEnd true;
+    ].
+
+# Processor to convert a dump of RDF data to a feed of ActivityStreams.
+[ ] a js:DumpsToFeed;
+    js:output <feed/writer>;
+    js:feedname "era-dcat-ap";
+    js:flush "false"^^xsd:boolean;
+    js:dump <raw/reader>;
+    js:dumpContentType "text/turtle";
+    js:focusNodesStrategy "extract";
+    js:nodeShapeIri "https://semiceu.github.io/LDES-DCAT-AP-feeds/shape.ttl#ActivityShape";
+    js:dbDir <./leveldb/>.
+
+# Processor to wrap the data as individual SDS records
+[ ] a js:Sdsify;
+    js:input <feed/reader>;
+    js:output <sds/writer>;
+    js:stream <https://w3id.org/sds#Stream>;
+    js:typeFilter as:Create, as:Update, as:Delete;
+    js:shape """
+        @prefix sh: <http://www.w3.org/ns/shacl#> .
+        @prefix as: <https://www.w3.org/ns/activitystreams#> .
+
+        [ ] a sh:NodeShape ;
+            sh:xone (
+                [
+                    a sh:NodeShape ;
+                    sh:targetClass as:Create
+                ]
+                [
+                    a sh:NodeShape ;
+                    sh:targetClass as:Update
+                ]
+                [
+                    a sh:NodeShape ;
+                    sh:targetClass as:Delete
+                ]
+            ).
+    """.
+
+# Processor to read and stream out the metadata for the LDES feed.
+[ ] a js:GlobRead;
+    js:glob <./metadata.ttl>;
+    js:output <metadata/writer>;
+    js:closeOnEnd "true"^^xsd:boolean.
+
+# Processor to bucketize the data
+[ ] a js:Bucketize;
+    js:channels [
+          js:dataInput <sds/reader>;
+          js:dataOutput <bucketized/writer>;
+          js:metadataInput <metadata/reader>;
+          js:metadataOutput <metadata/bucketized/writer>;
+      ];
+    js:bucketizeStrategy ( [
+                               a tree:TimebasedFragmentation;
+                               tree:timestampPath <https://www.w3.org/ns/activitystreams#published>;
+                               tree:maxSize 100;
+                               tree:k 4;
+                               tree:minBucketSpan 2592000;  # 1 month
+                           ]);
+    js:savePath <./feed-state/buckets_save.json>;
+    js:outputStreamId ex:ERAStream.
+
+# Processor to persist the SDS stream on disk
+[ ] a js:LdesDiskWriter;
+    js:dataInput <bucketized/reader>;
+    js:metadataInput <metadata/bucketized/reader>;
+    js:directory <../docs>.
