@@ -127,3 +127,43 @@ _:b27_b26_b25_b17_vb102812 a <http://www.w3.org/ns/dcat#DataService>;
 <#deletion-2025-07-01T01%3A53%3A08.822Z> a <https://www.w3.org/ns/activitystreams#Delete>;
     <https://www.w3.org/ns/activitystreams#object> <http://data.europa.eu/949/id/distribution/ERAdump>;
     <https://www.w3.org/ns/activitystreams#published> "2025-07-01T01:53:08.822Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>.
+<../../../index.trig> <https://w3id.org/tree#member> <#04538ee6e9c86c2c6cfff6f0b6320cde>.
+<#04538ee6e9c86c2c6cfff6f0b6320cde> a <https://www.w3.org/ns/activitystreams#Update>;
+    <https://www.w3.org/ns/activitystreams#object> <http://data.europa.eu/949/id/dataset/erakg>;
+    <https://www.w3.org/ns/activitystreams#published> "2025-08-22T01:36:46.735Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>.
+<#04538ee6e9c86c2c6cfff6f0b6320cde> {
+<http://data.europa.eu/949/id/dataset/erakg> a <http://www.w3.org/ns/dcat#Dataset>;
+    <http://purl.org/dc/terms/issued> "2024-06-18"^^<http://www.w3.org/2001/XMLSchema#date>;
+    <http://purl.org/dc/terms/contributor> <http://publications.europa.eu/resource/authority/corporate-body/DIGIT>, <https://oeg.fi.upm.es/>;
+    <http://purl.org/dc/terms/created> "2024-06-18"^^<http://www.w3.org/2001/XMLSchema#date>;
+    <http://purl.org/dc/terms/modified> "2025-07-24"^^<http://www.w3.org/2001/XMLSchema#date>;
+    <http://purl.org/dc/terms/title> "ERA Knowledge Graph"@en;
+    <http://rdfs.org/ns/void#vocabulary> <http://xmlns.com/foaf/0.1/>, <http://www.w3.org/1999/02/22-rdf-syntax-ns#>, <http://www.w3.org/2000/01/rdf-schema#>, <http://www.w3.org/2002/07/owl#>, <http://www.w3.org/2003/01/geo/wgs84_pos#>, <http://www.w3.org/ns/org#>, <http://www.w3.org/2004/02/skos/core#>, <https://creativecommons.org/licenses/by/4.0/>, <http://www.opengis.net/ont/geosparql#>, <http://data.europa.eu/949/>;
+    <http://purl.org/dc/terms/description> "Register of Infrastructure (RINF) Knowledge graph.  \n\t\tIt enables the Search of information regarding the characteristics and capabilities of operational points and sections \n\t\tof lines that belong to the static rail network, and the Route Compatibility Check (RCC) where the objective is to check if a certain railway vehicle can travel the route between \n\t\ttwo operational points. Vehicle type information is originated from the European Registry Authorized Type of Vehicle (ERATV)\n\t\t"@en;
+    <http://purl.org/dc/terms/creator> <http://publications.europa.eu/resource/authority/corporate-body/ERA>;
+    <http://purl.org/dc/terms/language> <http://publications.europa.eu/resource/authority/language/ENG>;
+    <http://rdfs.org/ns/void#classes> 74;
+    <http://rdfs.org/ns/void#properties> 568;
+    <http://rdfs.org/ns/void#sparqlEndpoint> <https://prod.virtuoso.ecdp.tech.ec.europa.eu/sparql>;
+    <http://rdfs.org/ns/void#triples> 53469976;
+    <http://rdfs.org/ns/void#uriSpace> <http://data.europa.eu/949/>;
+    <http://www.w3.org/ns/dcat#distribution> <http://data.europa.eu/949/id/distribution/ERAdump_v302>, <http://data.europa.eu/949/id/distribution/ERAdump_v1>, <http://data.europa.eu/949/id/distribution/ERAdump_v301>, <http://data.europa.eu/949/id/distribution/ERAdump_v303>, <http://data.europa.eu/949/id/distribution/ERAendpoint>;
+    <http://www.w3.org/ns/dcat#keyword> "Route Compatibility Check", "Railways", "ERA railway infrastructure";
+    <http://www.w3.org/ns/dcat#version> "3.0.0";
+    <http://purl.org/dc/terms/license> <https://creativecommons.org/licenses/by/4.0/>;
+    <http://www.w3.org/ns/sparql-service-description#namedGraph> <http://data.europa.eu/949/graph/im>, <http://data.europa.eu/949/graph/rinf>, <http://data.europa.eu/949/graph/shacl>, <http://data.europa.eu/949/graph/eratv>, <http://data.europa.eu/949/graph/ontology>, <http://data.europa.eu/949/graph/skos>, <http://data.europa.eu/949/graph/countries>, <http://data.europa.eu/949/graph/dcat>
+}
+<../../../index.trig> <https://w3id.org/tree#member> <#eb0078d9f7818be07f657123a947589c>.
+<#eb0078d9f7818be07f657123a947589c> a <https://www.w3.org/ns/activitystreams#Create>;
+    <https://www.w3.org/ns/activitystreams#object> <http://data.europa.eu/949/id/distribution/ERAdump_v303>;
+    <https://www.w3.org/ns/activitystreams#published> "2025-08-22T01:36:46.742Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>.
+<#eb0078d9f7818be07f657123a947589c> {
+<http://data.europa.eu/949/id/distribution/ERAdump_v303> a <http://www.w3.org/ns/dcat#Distribution>;
+    <http://purl.org/dc/terms/issued> "2025-07-24"^^<http://www.w3.org/2001/XMLSchema#date>;
+    <http://purl.org/dc/terms/title> "ERA KG dump v3.0.3"@en;
+    <http://purl.org/dc/terms/language> <http://publications.europa.eu/resource/authority/language/ENG>;
+    <http://www.w3.org/ns/dcat#accessURL> <https://doi.org/10.5281/zenodo.15691818>;
+    <http://www.w3.org/ns/dcat#downloadURL> <https://zenodo.org/records/16413403/files/2025-07-24-rinf-xml-combined.nq>;
+    <http://www.w3.org/ns/dcat#mediaType> <http://www.iana.org/assignments/media-types/application/n-quads>;
+    <http://purl.org/dc/terms/license> <http://data.europa.eu/eli/dec_impl/2017/863/oj>
+}
