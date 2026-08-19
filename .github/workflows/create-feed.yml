@@ -10,7 +10,7 @@ on:
 
   schedule:
     # every 12 hours
-    - cron: "* */12 * * *"
+    - cron: "0 */12 * * *"
 
 jobs:
   create-ldes-feed:
